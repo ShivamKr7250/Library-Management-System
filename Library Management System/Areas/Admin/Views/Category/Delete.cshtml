@@ -8,30 +8,41 @@
     </div>
     <div class="card-body p-4">
         <form method="post">
-    <input asp-for="Id" hidden />
-    <div class="border p-3 mt-4">
-        <div class="mb-3 row p-1">
-            <label asp-for="Name" class="p-0"></label>
-            <input asp-for="Name" disabled class="form-control" />
-        </div>
-        <div class="mb-3 row">
-            <label asp-for="DisplayOrder" class="p-1"></label>
-            <input asp-for="DisplayOrder" disabled class="form-control" />
-        </div>
-        <div class="row">
-            <div class="col-6 col-md-3">
-                <button type="submit" class="btn btn-danger form-control">Delete</button>
+            <input asp-for="Id" hidden />
+
+            <div class="border p-3 mt-4">
+                <!-- Display Category Name -->
+                <div class="mb-3 row">
+                    <label asp-for="CategoryName" class="p-1"></label>
+                    <input asp-for="CategoryName" disabled class="form-control" />
+                </div>
+
+                <!-- Display each Code as a disabled input -->
+                <div class="mb-3 row">
+                    <label class="p-1">Codes</label>
+                    <div id="codesContainer" class="w-100">
+                        @foreach (var code in Model.Code)
+
+                        {
+                            <div class="input-group mb-2">
+                                <input value="@code" class="form-control" disabled />
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Delete and Back Buttons -->
+                <div class="row">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-danger form-control">Delete</button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="Category" asp-action="Index" class="btn btn-outline-secondary border form-control">
+                            Back to List
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="col-6 col-md-3">
-                <a asp-controller="Category" asp-action="Index" class="btn btn-outline-secondary border form-control">
-                    Back to List
-                </a>
-            </div>
-        </div>
-    </div>
-</form>
+        </form>
     </div>
 </div>
-
-
-

@@ -3,24 +3,36 @@
 <div class="card shadow border-0 mt-4">
     <div class="card-header bg-secondary bg-gradient ml-0 py-3">
         <div class="row text-center">
-            <h2 class="text-primary py-2 ">Edit Category</h2>
+            <h2 class="text-primary py-2">Edit Category</h2>
         </div>
     </div>
     <div class="card-body p-4">
         <form method="post">
             <input asp-for="Id" hidden />
             <div class="border p-3 mt-4">
-                @*<div asp-validation-summary="ModelOnly"></div>*@
-                <div class="mb-3 row p-1">
-                    <label asp-for="Name" class="p-0"></label>
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
+
                 <div class="mb-3 row">
-                    <label asp-for="DisplayOrder" class="p-1"></label>
-                    <input asp-for="DisplayOrder" class="form-control" />
-                    <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+                    <label asp-for="CategoryName" class="p-1"></label>
+                    <input asp-for="CategoryName" class="form-control" />
+                    <span asp-validation-for="CategoryName" class="text-danger"></span>
                 </div>
+
+                <!-- Editable list of codes -->
+                <div class="mb-3 row">
+                    <label class="p-1">Codes</label>
+                    <div id="codesContainer" class="w-100">
+                        @for (int i = 0; i < Model.Code.Count; i++)
+
+                        {
+                            <div class="input-group mb-2">
+                                <input asp-for="Code[i]" class="form-control" />
+                                <button type="button" class="btn btn-danger remove-code">Remove</button>
+                            </div>
+                        }
+                    </div>
+                    <button type="button" id="addCodeBtn" class="btn btn-secondary mt-2">Add Code</button>
+                </div>
+
                 <div class="row">
                     <div class="col-6 col-md-3">
                         <button type="submit" class="btn btn-primary form-control">Update</button>
@@ -36,11 +48,36 @@
     </div>
 </div>
 
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 
+    <script>
+        document.getElementById('addCodeBtn').addEventListener('click', function () {
+            var container = document.getElementById('codesContainer');
+            var newInputGroup = document.createElement('div');
+            newInputGroup.className = 'input-group mb-2';
 
-@section Scripts{
-    @{
-        <partial name="_ValidationScriptsPartial" />
-    }
+            var input = document.createElement('input');
+            input.name = 'Code';
+            input.className = 'form-control';
 
+            var removeButton = document.createElement('button');
+            removeButton.className = 'btn btn-danger remove-code';
+            removeButton.type = 'button';
+            removeButton.innerText = 'Remove';
+            removeButton.addEventListener('click', function () {
+                container.removeChild(newInputGroup);
+            });
+
+            newInputGroup.appendChild(input);
+            newInputGroup.appendChild(removeButton);
+            container.appendChild(newInputGroup);
+        });
+
+        document.querySelectorAll('.remove-code').forEach(button => {
+            button.addEventListener('click', function () {
+                button.closest('.input-group').remove();
+            });
+        });
+    </script>
 }

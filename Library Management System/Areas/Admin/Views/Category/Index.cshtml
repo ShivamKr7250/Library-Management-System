@@ -20,22 +20,26 @@
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>
-                        Category Name
-                    </th>
-                    <th>
-                        Display Order
-                    </th>
+                    <th>Category Name</th>
+                    <th>Codes</th>
                     <th></th>
                 </tr>
             </thead>
 
             <tbody>
-                @foreach (var obj in Model.OrderBy(u => u.DisplayOrder))
+                @foreach (var obj in Model.OrderBy(u => u.CategoryName))
+
                 {
                     <tr>
-                        <td>@obj.Name</td>
-                        <td>@obj.DisplayOrder</td>
+                        <td>@obj.CategoryName</td>
+                        <td>
+                            @if (obj.Code != null && obj.Code.Any())
+
+                            {
+                                <!-- Display codes as a comma-separated list -->
+                                @string.Join(", ", obj.Code)
+                            }
+                        </td>
                         <td>
                             <div class="w-75 btn-group" role="group">
                                 <a asp-controller="Category" asp-action="Edit" asp-route-id="@obj.Id" class="btn btn-primary mx-2">
@@ -48,7 +52,6 @@
                         </td>
                     </tr>
                 }
-
             </tbody>
         </table>
     </div>

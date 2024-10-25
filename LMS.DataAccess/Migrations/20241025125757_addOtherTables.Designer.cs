@@ -4,6 +4,7 @@ using LMS.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LMS.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241025125757_addOtherTables")]
+    partial class addOtherTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,35 +56,6 @@ namespace LMS.DataAccess.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Books");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AuthorName = "Frank Herbert",
-                            BookName = "Dune",
-                            CategoryId = 1,
-                            IsBookAvailable = true,
-                            SerialName = "SF001"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AuthorName = "J.R.R. Tolkien",
-                            BookName = "The Hobbit",
-                            CategoryId = 2,
-                            IsBookAvailable = true,
-                            SerialName = "F001"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AuthorName = "Sun Tzu",
-                            BookName = "The Art of War",
-                            CategoryId = 3,
-                            IsBookAvailable = false,
-                            SerialName = "H001"
-                        });
                 });
 
             modelBuilder.Entity("LMS.Models.Category", b =>
@@ -103,26 +77,6 @@ namespace LMS.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CategoryName = "Science Fiction",
-                            Code = "[\"SF001\",\"SF002\",\"SF003\"]"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CategoryName = "Fantasy",
-                            Code = "[\"F001\",\"F002\",\"F003\"]"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CategoryName = "History",
-                            Code = "[\"H001\",\"H002\",\"H003\"]"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

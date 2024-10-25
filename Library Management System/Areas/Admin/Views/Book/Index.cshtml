@@ -1,4 +1,4 @@
-﻿@model List<Product>
+﻿@model List<Books>
 
 <div class="card shadow border-0 my-4">
     <div class="card-header bg-secondary bg-gradient ml-0 py-3">
@@ -11,8 +11,8 @@
             <div class="col-6">
             </div>
             <div class="col-6 text-end">
-                <a asp-controller="Product" asp-action="Upsert" class="btn btn-primary">
-                    <i class="bi bi-plus-circle"></i> Create New Product
+                <a asp-controller="Book" asp-action="Upsert" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Create New Books
                 </a>
             </div>
         </div>
@@ -21,19 +21,16 @@
             <thead>
                 <tr>
                     <th>
-                        Title
+                        Book Name
                     </th>
                     <th>
-                        ISBN
+                        Author Name
                     </th>
                     <th>
-                       Author
+                        Serial Number
                     </th>
                     <th>
-                       Category
-                    </th>
-                    <th>
-                        Price
+                        Category
                     </th>
                     <th></th>
                 </tr>
@@ -42,6 +39,6 @@
     </div>
 </div>
 
-@section Scripts{
-    <script src="~/js/product.js"></script>
+@section Scripts {
+    <script src="~/js/book.js"></script>
 }

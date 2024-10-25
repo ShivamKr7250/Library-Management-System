@@ -1,0 +1,92 @@
+﻿@using LMS.Models.ViewModels
+@model BookVM
+
+<div class="card shadow border-0 mt-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row text-center">
+            <h2 class="text-primary py-2"> @(Model.Books.Id != 0 ? "Update" : "Create") Book</h2>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <form method="post" class="row" enctype="multipart/form-data">
+            <input asp-for="Books.Id" hidden />
+            <div class="row">
+                <div class="col-10">
+                    <div class="border p-3">
+                        <div asp-validation-summary="ModelOnly"></div>
+
+                        <!-- Book Name Field -->
+                        <div class="mb-3 row">
+                            <label asp-for="Books.BookName" class="p-1"></label>
+                            <input asp-for="Books.BookName" class="form-control border-0 shadow" />
+                            <span asp-validation-for="Books.BookName" class="text-danger"></span>
+                        </div>
+
+                        <!-- Author Name Field -->
+                        <div class="mb-3 row">
+                            <label asp-for="Books.AuthorName" class="p-1"></label>
+                            <input asp-for="Books.AuthorName" class="form-control border-0 shadow" />
+                            <span asp-validation-for="Books.AuthorName" class="text-danger"></span>
+                        </div>
+
+                        <!-- Category Dropdown -->
+                        <div class="mb-3 row">
+                            <label asp-for="Books.CategoryId" class="p-1"></label>
+                            <select asp-for="Books.CategoryId" asp-items="Model.CategoryList" class="form-select border-0 shadow">
+                                <option disabled selected>--Select Category--</option>
+                            </select>
+                            <span asp-validation-for="Books.CategoryId" class="text-danger"></span>
+                        </div>
+
+                        <!-- Serial Name (Code) Dropdown - Populated Based on Selected Category -->
+                        <div class="mb-3 row">
+                            <label asp-for="Books.SerialName" class="p-1"></label>
+                            <select asp-for="Books.SerialName" class="form-select border-0 shadow">
+                                <option disabled selected>--Select Code--</option>
+                                @foreach (var code in Model.CodeList)
+
+                                {
+                                    <option value="@code">@code</option>
+                                }
+                            </select>
+                            <span asp-validation-for="Books.SerialName" class="text-danger"></span>
+                        </div>
+
+                        <!-- Is Book Available Checkbox -->
+                        <div class="mb-3 row">
+                            <label asp-for="Books.IsBookAvailable" class="p-1"></label>
+                            <input asp-for="Books.IsBookAvailable" class="form-check-input" />
+                            <span asp-validation-for="Books.IsBookAvailable" class="text-danger"></span>
+                        </div>
+
+                        <!-- Submit and Back Buttons -->
+                        <div class="row">
+                            <div class="col-6 col-md-3">
+                                <button type="submit" class="btn btn-primary form-control">
+                                    @(Model.Books.Id != 0 ? "Update" : "Create")
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a asp-controller="Books" asp-action="Index" class="btn btn-outline-secondary border form-control">
+                                    Back to List
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // TinyMCE initialization, if needed for any text areas
+        tinymce.init({
+            selector: 'textarea',
+            plugins: '',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | align lineheight | tinycomments | checklist numlist bullist indent outdent',
+        });
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

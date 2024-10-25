@@ -13,5 +13,6 @@ namespace LMS.Models.ViewModels
         public Books Books { get; set; }
         [ValidateNever]
         public IEnumerable<SelectListItem> CategoryList { get; set; }
+        public List<string> CodeList { get; set; } // Holds available codes for the category
     }
 }

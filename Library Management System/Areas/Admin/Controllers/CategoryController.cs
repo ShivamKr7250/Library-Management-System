@@ -4,11 +4,12 @@ using LMS.Models;
 using LMS.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace LMS.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles =SD.Role_Admin)]
+    [Authorize(Roles = SD.Role_Admin)]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -17,6 +18,7 @@ namespace LMS.Areas.Admin.Controllers
         {
             _unitOfWork = db;
         }
+
         public IActionResult Index()
         {
             List<Category> objCategoryList = _unitOfWork.Category.GetAll().ToList();
@@ -31,6 +33,9 @@ namespace LMS.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Create(Category obj)
         {
+            // Ensure Code list is initialized to avoid null reference issues
+            if (obj.Code == null) obj.Code = new List<string>();
+
             if (ModelState.IsValid)
             {
                 _unitOfWork.Category.Add(obj);
@@ -38,8 +43,7 @@ namespace LMS.Areas.Admin.Controllers
                 TempData["success"] = "Category Created Successfully";
                 return RedirectToAction("Index", "Category");
             }
-            return View();
-
+            return View(obj);
         }
 
         public IActionResult Edit(int? id)
@@ -48,7 +52,8 @@ namespace LMS.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            Category? categoryFromDb = _unitOfWork.Category.Get(u => u.Id == id); 
+
+            Category? categoryFromDb = _unitOfWork.Category.Get(u => u.Id == id);
             if (categoryFromDb == null)
             {
                 return NotFound();
@@ -59,6 +64,8 @@ namespace LMS.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Edit(Category obj)
         {
+            if (obj.Code == null) obj.Code = new List<string>();
+
             if (ModelState.IsValid)
             {
                 _unitOfWork.Category.Update(obj);
@@ -66,8 +73,7 @@ namespace LMS.Areas.Admin.Controllers
                 TempData["success"] = "Category Updated Successfully";
                 return RedirectToAction("Index", "Category");
             }
-            return View();
-
+            return View(obj);
         }
 
         public IActionResult Delete(int? id)

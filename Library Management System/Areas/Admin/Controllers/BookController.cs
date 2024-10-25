@@ -31,26 +31,35 @@ namespace LMS.Areas.Admin.Controllers
 
         public IActionResult Upsert(int? id)
         {
-
+            // Initialize the ViewModel with CategoryList and Books model
             BookVM BooksVM = new()
             {
-                    CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
-                    {
-                        Text = u.CategoryName,
-                        Value = u.Id.ToString(),
-                    }),
-                    Books = new Books()
+                CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.CategoryName,
+                    Value = u.Id.ToString(),
+                }),
+                Books = new Books()
             };
-            
-            if(id == null || id == 0)
+
+            if (id == null || id == 0)
             {
-                //Create
+                // Create mode
                 return View(BooksVM);
             }
             else
             {
-                //Update
-                BooksVM.Books = _unitOfWork.Books.Get(u => u.Id==id, includeProperties:"BooksImages");
+                // Update mode - load the specific book
+                BooksVM.Books = _unitOfWork.Books.Get(u => u.Id == id, includeProperties: "Category");
+
+                // Load available codes for the existing category of the book
+                if (BooksVM.Books.Category != null)
+                {
+                    BooksVM.CodeList = BooksVM.Books.Category.Code
+                        .Where(code => !_unitOfWork.Books.GetAll(b => b.CategoryId == BooksVM.Books.CategoryId && b.SerialName == code).Any())
+                        .ToList();
+                }
+
                 return View(BooksVM);
             }
         }
@@ -58,32 +67,55 @@ namespace LMS.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Upsert(BookVM BooksVM, List<IFormFile> files)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
+                int categoryId = BooksVM.Books.CategoryId;
+                var category = _unitOfWork.Category.Get(c => c.Id == categoryId);
 
                 if (BooksVM.Books.Id == 0)
                 {
+                    // Assign the first available code from the category's code list
+                    var availableCode = category.Code
+                        .FirstOrDefault(code => !_unitOfWork.Books.GetAll(b => b.CategoryId == categoryId && b.SerialName == code).Any());
+
+                    if (availableCode != null)
+                    {
+                        BooksVM.Books.SerialName = availableCode; // Assign the available code
+                    }
+                    else
+                    {
+                        TempData["error"] = "No available codes left for this category.";
+                        return RedirectToAction("Upsert");
+                    }
+
                     _unitOfWork.Books.Add(BooksVM.Books);
                 }
                 else
                 {
+                    // Update book details, keep the existing code if not changed
                     _unitOfWork.Books.Update(BooksVM.Books);
                 }
+
                 _unitOfWork.Save();
-                
-                TempData["success"] = "Books Created/Updated Successfully";
-                return RedirectToAction("Index","Books");
+                TempData["success"] = "Book Created/Updated Successfully";
+                return RedirectToAction("Index", "Books");
             }
             else
             {
+                // Reload CategoryList and CodeList if the model state is invalid
                 BooksVM.CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
                 {
                     Text = u.CategoryName,
                     Value = u.Id.ToString(),
                 });
+
+                // Reload available codes for the selected category
+                BooksVM.CodeList = _unitOfWork.Category.Get(c => c.Id == BooksVM.Books.CategoryId)?.Code;
                 return View(BooksVM);
             }
         }
+
+
 
         //public IActionResult DeleteImage(int imageId)
         //{
